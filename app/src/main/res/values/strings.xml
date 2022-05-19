@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">App-Kaganga</string>
+    <string name="action_tips">Petunjuk</string>
+    <string name="action_settings">Tentang</string>
+    <string name="action_pick_image_camera">Ambil Gambar - Kamera</string>
+    <string name="action_pick_image_galery">Ambil Gambar - Galeri</string>
+    <string name="action_save">Simpan Hasil</string>
+    <string name="action_home">Halaman Utama</string>
+    <string name="image_to_scan">Gambar Inputan</string>
+    <string name="deleted">Terhapus</string>
+    <string name="failed">Gagal</string>
+    <string name="pilih_gambar_inputan">Pilih Gambar Inputan</string>
+    <string name="mulai">MULAI</string>
+    <string name="image_input">Gambar Inputan</string>
+    <string name="preprocess">Gambar Hasil Canny Edge Detection dan Segmentasi</string>
+    <string name="processing">SEDANG MEMPROSES...</string>
+    <string name="process">Proses</string>
+    <string name="result">Hasil Template Matching</string>
+    <string name="accuracy">Hasil Template Matching dengan kualitas : %1$s</string>
+    <string name="delete">Hapus</string>
+    <string name="tentang">Tentang Aplikasi</string>
+    <string name="isi_tentang">Aksara Kaganga atau Aksara Ulu adalah aksara asli provinsi Bengkulu yang masih ada hingga saat ini. Aksara kaganga terdiri dari huruf tunggal dan huruf bersandangan, Aksara kaganga itu sendiri mencakup empat varian suku yang ada di provinsi Bengkulu yaitu, serawai, pasemah, rejang dan lembak. Berikut merupakan tabelu huruf tunggal dan bersandangan aksara kaganga beserta contoh kata aksara kaganga</string>
+    <string name="petunjuk">Petunjuk Penggunaan</string>
+    <string name="petunjuk1">Masukan gambar kedalam aplikasi.</string>
+    <string name="petunjuk2">Gambar kemudian dipotong (crop) dan disesuaikan.</string>
+    <string name="petunjuk3">Pada tahap segmentasi, geser seekbar untuk memilih huruf yang akan diproses.</string>
+    <string name="petunjuk4">Klik tombol proses, maka output latin akan keluar.</string>
+</resources>
