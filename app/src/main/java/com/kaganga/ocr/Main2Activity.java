@@ -172,9 +172,10 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
         //Convert to HSV
         //Imgproc.cvtColor(mRgba, mRgbaFiltered, Imgproc.COLOR_RGB2HSV);
         Imgproc.cvtColor(mRgba, mRgbaFiltered, Imgproc.COLOR_BGR2GRAY);
-        Imgproc.medianBlur(mRgbaFiltered,mRgbaFiltered, 3);
+        //Imgproc.medianBlur(mRgbaFiltered,mRgbaFiltered, 5);
+        Imgproc.GaussianBlur(mRgbaFiltered,mRgbaFiltered, new Size(7,7),0);
         Mat edges = new Mat();
-        Imgproc.Canny(mRgbaFiltered,edges,60,60*3);
+        Imgproc.Canny(mRgbaFiltered,edges,50,100);
 
         if(runIdentification) {
             jarak = (EditText) findViewById(R.id.jarak);
@@ -184,11 +185,11 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
             //Core.inRange(mRgbaFiltered, lower, upper, mRgbaFiltered);
 
             //Dilasi
-            Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new  Size(10, 10));
+            Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new  Size(12, 12));
             Imgproc.dilate(edges, edges, element);
 
             //Erosi
-            Mat element1 = Imgproc.getStructuringElement(Imgproc.MORPH_ERODE, new  Size(2, 2));
+            Mat element1 = Imgproc.getStructuringElement(Imgproc.MORPH_ERODE, new  Size(6, 6));
             Imgproc.erode(edges, edges, element1);
 
 
@@ -203,7 +204,7 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
 
             for (int i = 0; i < contours.size(); i++) {
 
-                if (contours.get(i).total() > 100 && contours.get(i).total() < 5000) {
+                if (contours.get(i).total() > 500 && contours.get(i).total() < 5000) {
                     MatOfPoint points = new MatOfPoint(contours.get(i).toArray());
                     Rect rect = Imgproc.boundingRect(points);
 
@@ -221,13 +222,10 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
                                 Float jaraks = Float.parseFloat(jarak.getText().toString());
                                 Float width = Float.parseFloat(String.valueOf(rect.width));
                                 Float height = Float.parseFloat(String.valueOf(rect.height));
-                                Float consts = jaraks/9;
-                                Float panjang = (width/266)*2*consts;
-                                Float lebar = (height/278)*2*consts;
-                                Log.i(String.valueOf(jaraks),"Jarak");
-                                Log.i(String.valueOf(rect.width),"panjang");
-                                Log.i(String.valueOf(rect.height),"lebar");
-
+                                double consts = jaraks/8.5;
+                                double panjang = (width/602)*5*consts;
+                                double lebar = (height/171)*1.4*consts;
+                                //tvAverageFish.setText(String.valueOf(rect.width)+"--"+String.valueOf(rect.height));
                                 tvAverageFish.setText(String.format("%.2f",panjang)+" cm"+" x "+String.format("%.2f",lebar)+" cm");
                                 tvAverageFish2.setText("("+String.format("%.2f",panjang*lebar)+" cm2)");
                             }
