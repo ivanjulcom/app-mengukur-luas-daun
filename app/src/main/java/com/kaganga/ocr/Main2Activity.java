@@ -12,6 +12,7 @@ import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
     private static final String TAG = "MainActivity";
     JavaCameraView javaCameraView;
     private TextView tvAverageFish;
+    private TextView tvAverageFish2;
     private ArrayList<MatOfPoint> countours;
     private int frameCount  ;
     private int averageFish  ;
@@ -51,6 +53,8 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
     Mat mRgbaFiltered;
     private boolean runIdentification = false;
     private Button btnStart, btnStop;
+    EditText jarak;
+    private int const_jarak = 10;
 
     BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -88,6 +92,7 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
 
 
         tvAverageFish = (TextView) findViewById(R.id.tvAverageFish);
+        tvAverageFish2 = (TextView) findViewById(R.id.tvAverageFish2);
         btnStart = (Button) findViewById(R.id.btn_str);
         btnStop = (Button) findViewById(R.id.btn_stp);
 
@@ -99,6 +104,7 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
                 averageFish = 0;
                 allFish = 0;
                 tvAverageFish.setVisibility(View.VISIBLE);
+                tvAverageFish2.setVisibility(View.VISIBLE);
             }
         });
 
@@ -107,6 +113,7 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
             public void onClick(View v) {
                 runIdentification = false;
                 tvAverageFish.setVisibility(View.VISIBLE);
+                tvAverageFish2.setVisibility(View.VISIBLE);
             }
         });
 
@@ -170,7 +177,7 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
         Imgproc.Canny(mRgbaFiltered,edges,60,60*3);
 
         if(runIdentification) {
-
+            jarak = (EditText) findViewById(R.id.jarak);
             //Put yellow in pixel on range hsv
             //Scalar lower = new Scalar(50, 100, 100);
             //Scalar upper = new Scalar(70, 255, 255);
@@ -210,7 +217,19 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
                         Main2Activity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                tvAverageFish.setText(String.valueOf(rect.width+" x "+rect.height +" cm"));
+                                /*jarak 9 cm 266 pxl 278 pxl*/
+                                Float jaraks = Float.parseFloat(jarak.getText().toString());
+                                Float width = Float.parseFloat(String.valueOf(rect.width));
+                                Float height = Float.parseFloat(String.valueOf(rect.height));
+                                Float consts = jaraks/9;
+                                Float panjang = (width/266)*2*consts;
+                                Float lebar = (height/278)*2*consts;
+                                Log.i(String.valueOf(jaraks),"Jarak");
+                                Log.i(String.valueOf(rect.width),"panjang");
+                                Log.i(String.valueOf(rect.height),"lebar");
+
+                                tvAverageFish.setText(String.format("%.2f",panjang)+" cm"+" x "+String.format("%.2f",lebar)+" cm");
+                                tvAverageFish2.setText("("+String.format("%.2f",panjang*lebar)+" cm2)");
                             }
                         });
                     }
@@ -226,7 +245,8 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
             Main2Activity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    tvAverageFish.setText(String.valueOf("0 x 0 cm"));
+                    tvAverageFish.setText(String.valueOf("0 cm x 0 cm"));
+                    tvAverageFish2.setText(String.valueOf("(0 cm2)"));
                 }
             });
         }
