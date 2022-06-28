@@ -42,8 +42,8 @@ import java.util.ArrayList;
 public class Main2Activity extends Activity implements JavaCameraView.CvCameraViewListener2 {
     private static final String TAG = "MainActivity";
     JavaCameraView javaCameraView;
-    private TextView tvAverageFish;
-    private TextView tvAverageFish2;
+    private TextView tvLuas;
+    private TextView tvLuas2;
     private ArrayList<MatOfPoint> countours;
     private int frameCount  ;
     private int averageFish  ;
@@ -91,8 +91,8 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
         javaCameraView.setCvCameraViewListener(this);
 
 
-        tvAverageFish = (TextView) findViewById(R.id.tvAverageFish);
-        tvAverageFish2 = (TextView) findViewById(R.id.tvAverageFish2);
+        tvLuas = (TextView) findViewById(R.id.tvAverageFish);
+        tvLuas2 = (TextView) findViewById(R.id.tvAverageFish2);
         btnStart = (Button) findViewById(R.id.btn_str);
         btnStop = (Button) findViewById(R.id.btn_stp);
 
@@ -103,8 +103,8 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
                 frameCount = 0;
                 averageFish = 0;
                 allFish = 0;
-                tvAverageFish.setVisibility(View.VISIBLE);
-                tvAverageFish2.setVisibility(View.VISIBLE);
+                tvLuas.setVisibility(View.VISIBLE);
+                tvLuas2.setVisibility(View.VISIBLE);
             }
         });
 
@@ -112,8 +112,8 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
             @Override
             public void onClick(View v) {
                 runIdentification = false;
-                tvAverageFish.setVisibility(View.VISIBLE);
-                tvAverageFish2.setVisibility(View.VISIBLE);
+                tvLuas.setVisibility(View.VISIBLE);
+                tvLuas2.setVisibility(View.VISIBLE);
             }
         });
 
@@ -168,21 +168,16 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         mRgba = inputFrame.rgba();
-
-        //Convert to HSV
-        //Imgproc.cvtColor(mRgba, mRgbaFiltered, Imgproc.COLOR_RGB2HSV);
+        //RGB2Gray
         Imgproc.cvtColor(mRgba, mRgbaFiltered, Imgproc.COLOR_BGR2GRAY);
-        //Imgproc.medianBlur(mRgbaFiltered,mRgbaFiltered, 5);
+        //Gaussian
         Imgproc.GaussianBlur(mRgbaFiltered,mRgbaFiltered, new Size(7,7),0);
+        //Edge Detection
         Mat edges = new Mat();
         Imgproc.Canny(mRgbaFiltered,edges,50,100);
 
         if(runIdentification) {
             jarak = (EditText) findViewById(R.id.jarak);
-            //Put yellow in pixel on range hsv
-            //Scalar lower = new Scalar(50, 100, 100);
-            //Scalar upper = new Scalar(70, 255, 255);
-            //Core.inRange(mRgbaFiltered, lower, upper, mRgbaFiltered);
 
             //Dilasi
             Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, new  Size(12, 12));
@@ -191,11 +186,6 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
             //Erosi
             Mat element1 = Imgproc.getStructuringElement(Imgproc.MORPH_ERODE, new  Size(6, 6));
             Imgproc.erode(edges, edges, element1);
-
-
-            //Smooth with medianblur
-            //Imgproc.medianBlur(edges,edges, 3);
-
 
             //Contours
             ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -210,24 +200,19 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
 
                     //Draw rectangle
                     Imgproc.rectangle(mRgba, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0, 255), 5);
-
-                    //Imgproc.putText(mRgba,"Berat Ikan:"+contours.get(i).size(),new Point(rect.x, rect.y),1,3,new Scalar(255, 0, 0, 255), 5);
-
-                    allFish ++;
                     if(frameCount==1){
                         Main2Activity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                /*jarak 9 cm 266 pxl 278 pxl*/
+                                //Rumus mencari luas daun
                                 Float jaraks = Float.parseFloat(jarak.getText().toString());
                                 Float width = Float.parseFloat(String.valueOf(rect.width));
                                 Float height = Float.parseFloat(String.valueOf(rect.height));
                                 double consts = jaraks/8.5;
                                 double panjang = (width/602)*5*consts;
                                 double lebar = (height/171)*1.4*consts;
-                                //tvAverageFish.setText(String.valueOf(rect.width)+"--"+String.valueOf(rect.height));
-                                tvAverageFish.setText(String.format("%.2f",panjang)+" cm"+" x "+String.format("%.2f",lebar)+" cm");
-                                tvAverageFish2.setText("("+String.format("%.2f",panjang*lebar)+" cm2)");
+                                tvLuas.setText(String.format("%.2f",panjang)+" cm"+" x "+String.format("%.2f",lebar)+" cm");
+                                tvLuas2.setText("("+String.format("%.2f",panjang*lebar)+" cm2)");
                             }
                         });
                     }
@@ -243,8 +228,8 @@ public class Main2Activity extends Activity implements JavaCameraView.CvCameraVi
             Main2Activity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    tvAverageFish.setText(String.valueOf("0 cm x 0 cm"));
-                    tvAverageFish2.setText(String.valueOf("(0 cm2)"));
+                    tvLuas.setText(String.valueOf("0 cm x 0 cm"));
+                    tvLuas2.setText(String.valueOf("(0 cm2)"));
                 }
             });
         }
